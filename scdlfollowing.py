@@ -27,41 +27,41 @@ def parse ():
 
 #returns the scoundcloud id based on the soundcloud permalink
 def getId (link):
-        #data needed to use resolve from the soundcloud api
-        resolveUrl = 'http://api.soundcloud.com/resolve'
-        resolveParam = dict (
-                url = link,
-                client_id = soundcloud_client_ID
-        )
+	#data needed to use resolve from the soundcloud api
+	resolveUrl = 'http://api.soundcloud.com/resolve'
+	resolveParam = dict (
+		url = link,
+		client_id = soundcloud_client_ID
+	)
 
-        #curls the soundcloud api to get the id of soundcloud user with the client api key ;)
-        resolve = requests.get(url = resolveUrl, params = resolveParam)
+	#curls the soundcloud api to get the id of soundcloud user with the client api key ;)
+	resolve = requests.get(url = resolveUrl, params = resolveParam)
 
-        #converts the response from the get requests into json then sets userId to the value from the 'id' field
-        userId = str(resolve.json()['id'])
-        return userId
+	#converts the response from the get requests into json then sets userId to the value from the 'id' field
+	userId = str(resolve.json()['id'])
+	return userId
 
 #returns the permalink of all the artist that the user is fillowing
 def followings (id):
-        #data needed to use /user/followings from the soundcloud api
-        followingsUrl = 'http://api.soundcloud.com/users/{0}/followings'.format(id)
-        followingsParam = dict (
-                client_id = soundcloud_client_ID
-        )
+	#data needed to use /user/followings from the soundcloud api
+	followingsUrl = 'http://api.soundcloud.com/users/{0}/followings'.format(id)
+	followingsParam = dict (
+			client_id = soundcloud_client_ID
+	)
 
-        #curls the api to get data about all the channels the user is following
-        followings = requests.get(url = followingsUrl, params = followingsParam)
+	#curls the api to get data about all the channels the user is following
+	followings = requests.get(url = followingsUrl, params = followingsParam)
 
-        #converts the output from the api call into json
-        data = followings.json()['collection']
+	#converts the output from the api call into json
+	data = followings.json()['collection']
 
-        #parses the artist permalink from the json then places it into a list
-        links = []
-        for artist in data:
-                link = artist.get('permalink_url')
-                links.append(link)
+	#parses the artist permalink from the json then places it into a list
+	links = []
+	for artist in data:
+		link = artist.get('permalink_url')
+		links.append(link)
 
-        return links
+	return links
 
 #runs the scdl script for every link in the artistLinks list
 def download (following):
@@ -70,12 +70,12 @@ def download (following):
 
 	#for loop going through the list of artists' links
 	for artist in following:
-        	name = artist.replace('http://soundcloud.com/','')
+		name = artist.replace('https://soundcloud.com/','')
 		#creates a folder using the name of the artist
-	        subprocess.call(['mkdir',"following/"+name])
+		subprocess.call(['mkdir',"following/"+name])
 
-        	#calls the soundcoud downloader script - downloads all the uploads of the artist and places all the music in the created folder
-	        subprocess.call(['scdl','-t','-c','-l',artist,'--path',"./following/"+name])
+		#calls the soundcoud downloader script - downloads all the uploads of the artist and places all the music in the created folder
+		subprocess.call(['scdl','-t','-c','-l',artist,'--path',"./following/"+name])
 
 #removes matching links from the -r option
 def remove (artists):
